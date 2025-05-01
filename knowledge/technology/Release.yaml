@@ -1,0 +1,140 @@
+created_by: Accurate Background Team
+domain: technology
+task_description: Understanding the concept and structure of ReleaseId in Accurate Background's screening system.
+document:
+  repo: https://github.com/instructlab/instructlab
+  commit: 4448ac1c98fa6cad03e969a678ca3ea77f6338a3
+  patterns:
+    - docs/release.md
+seed_examples:
+  - question: What is ReleaseId in Accurate Background?
+    answer: >
+     ReleaseId is an identifier for a Background Screening, to be conducted by Accurate Background. The internal systems define lifetime for a background check. When an employer requests a background check for a prospective candidate, Accurate Background
+     systems create a request against it and assign an identifier called ReleaseId. Linked to this is the package settings, customer settings and any other config, in addition to the method of raising this request which can be a Send Invitation by Client Portal or 
+     through an ATS system which is an integration with Client systems and makes requests through an xml payload or it may be a Kiosk request where Client has the Candidate in its premises and provide access to their systems to complete the background data collection
+     process.
+     The table that houses the ReleaseId is 
+     select * from release where releaseid = @releaseId
+     Once Release is completed and Candidate has provided all Background check information, this Release is transitioned to an Order designated by an OrderId. The table that houses OrderId is
+     select * from orders where origid = @orderId
+     ReleaseId can be more accurately termed as WebaceReleaseId and is part of Release table in AuricoInternal database.
+  - question: What is Release in Accurate Background
+    answer: >
+     Release is the term used for a Background Screening that has not yet transitioned to an Order. An Order is when all of the requested information by Client is collected from Candidate and fulfillment, billing and invoicing processes can commence. Other
+     terms commonly used interchangeably for a Release is Invitation or Pending Invitation. 
+  - question: Where is ReleaseId used in Accurate Background
+    answer: >
+     ReleaseId is used to identify a Release/Invitation/Pending Invitation. It is stored in Release table in AuricoInternal database. When a Client first requests a Background Screening, Accurate Background systems create a request detailing all requirements
+     and assign an Id to this request which is internally within Accurate Background referred as ReleaseId. It is saved in following table:
+     select * from AuricoInternal.Release where releaseId = @releaseId
+  - question: How can I get ReleaseId
+    answer: >
+     There are number of ways to get a ReleaseId. You can use Release API to get ReleaseId. Alternatively you can directly query AuricoInternal database to get ReleaseId. ReleaseId can be used to trace all details pertaining to a background screening request
+     by an Employer, internally also referred to as Client or Customer.
+  - question: 
+     How many types of Releases does Accurate Background systems have?
+    answer: >
+     Accurate Background systems have broadly two types of Releases, WebaceReleaseId or just ReleaseId and NewReleaseId. ReleaseId is identifier for Release table in AuricoInternal database whereas NewReleaseId is part of releases_releases table and is part of cbesdev/cbesstage/aceuat/cbesprod table.
+     AuricoInternal is created in Sql Server is and is hosted in Rackspace whereas cbesdev/cbesstage/aceuat/cbesprod database is created in MySql and is hosted in AWS. Identifier for Release is ReleaseId whereas identifier for releases_releases is Id which is referred
+     as NewReleaseId. 
+     Release API can be used to access both types of releases. Following is the endpoint information:
+     GET /api/Releases/{releaseId}
+     This accepts NewReleaseId and returns a Release object as follows:
+     {
+       "id": 0,
+       "created": "2025-04-13T06:03:24.767Z",
+       "createdBy": 0,
+       "modified": "2025-04-13T06:03:24.767Z",
+       "modifiedBy": 0,
+       "deleted": "2025-04-13T06:03:24.767Z",
+       "deletedBy": 0,
+       "candidateId": 0,
+       "clientId": 0,
+       "masterClientId": 0,
+       "companyName": "string",
+       "sendConsumerCreditReport": true,
+       "sendConsumerReport": true,
+       "expiresOn": "2025-04-13T06:03:24.767Z",
+       "isExpired": true,
+       "status": 1,
+       "orders": [
+        0
+       ],
+       "orderDetails": [
+        {
+          "orderId": 0,
+          "isCompleted": true,
+          "orderStatus": "string",
+          "orderType": "string",
+          "dispute": true,
+          "isSuccessfulDispute": true
+        }
+       ],
+       "escreenUrl": "string",
+       "drugTestScheduleStatus": 1,
+       "isKioskEntered": true,
+       "isXmlOrder": true,
+       "isolateCandidatePortal": true,
+       "languageLocked": "string",
+       "runSSAndPCTrace": true,
+       "disableAddressValidation": true,
+       "validateCandidateEmailID": true,
+       "backgroundAdultOnly": true,
+       "isDhsScheduled": true,
+       "dhsUrl": "string",
+       "dhsOrderId": "string",
+       "webaceReleaseId": 0,
+       "shallowRelease": true,
+       "isDDCv2Enabled": true
+     }
+     GET /api/Releases 
+     This endpoint accepts query strings candidateId, customerId, webaceReleaseId or combination of these and will return following resource:
+     [
+      {
+        "id": 0,
+        "created": "2025-04-13T06:04:40.759Z",
+        "createdBy": 0,
+        "modified": "2025-04-13T06:04:40.759Z",
+        "modifiedBy": 0,
+        "deleted": "2025-04-13T06:04:40.759Z",
+        "deletedBy": 0,
+        "candidateId": 0,
+        "clientId": 0,
+        "masterClientId": 0,
+        "companyName": "string",
+        "sendConsumerCreditReport": true,
+        "sendConsumerReport": true,
+        "expiresOn": "2025-04-13T06:04:40.759Z",
+        "isExpired": true,
+        "status": 1,
+        "orders": [
+          0
+        ],
+        "orderDetails": [
+          {
+            "orderId": 0,
+            "isCompleted": true,
+            "orderStatus": "string",
+            "orderType": "string",
+            "dispute": true,
+            "isSuccessfulDispute": true
+          }
+        ],
+        "escreenUrl": "string",
+        "drugTestScheduleStatus": 1,
+        "isKioskEntered": true,
+        "isXmlOrder": true,
+        "isolateCandidatePortal": true,
+        "languageLocked": "string",
+        "runSSAndPCTrace": true,
+        "disableAddressValidation": true,
+        "validateCandidateEmailID": true,
+        "backgroundAdultOnly": true,
+        "isDhsScheduled": true,
+        "dhsUrl": "string",
+        "dhsOrderId": "string",
+        "webaceReleaseId": 0,
+        "shallowRelease": true,
+        "isDDCv2Enabled": true
+      }
+     ]
